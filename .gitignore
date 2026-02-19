@@ -1,0 +1,46 @@
+# ===========================
+# DATI (non versionati)
+# ===========================
+data/
+
+# ===========================
+# CARTELLE LOCALI
+# ===========================
+_archive/
+_docs/
+scripts/
+example_plots/
+
+# ===========================
+# FILE DI TEST/DEBUG
+# ===========================
+test_*.html
+test-*.html
+debug.html
+
+# ===========================
+# PYTHON
+# ===========================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+
+# ===========================
+# RUNTIME / LOG
+# ===========================
+nohup.out
+*.log
+
+# ===========================
+# SISTEMA / EDITOR
+# ===========================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
+*~

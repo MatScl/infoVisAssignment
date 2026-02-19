@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard InfoVis - Insider Threat</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- carico D3.js da CDN -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Dashboard Insider Threat Detection</h1>
+        <p class="subtitle">Progetto InfoVis - Dataset CERT r4.2 (300 utenti)</p>
+    </header>
+
+    <main class="dashboard">
+        <!-- pannello con i filtri -->
+        <aside class="controls-panel">
+            <h2>Filtri</h2>
+            
+            <!-- filtro cluster -->
+            <div class="control-group">
+                <label for="cluster-filter">Cluster:</label>
+                <select id="cluster-filter" multiple>
+                    <option value="all" selected>Tutti</option>
+                    <!-- le altre opzioni vengono aggiunte da JS -->
+                </select>
+            </div>
+
+            <!-- filtro tipo utente -->
+            <div class="control-group">
+                <label for="insider-filter">Tipo Utente:</label>
+                <select id="insider-filter">
+                    <option value="all" selected>Tutti</option>
+                    <option value="1">Solo Insider</option>
+                    <option value="0">Solo Normali</option>
+                </select>
+            </div>
+
+            <!-- slider per score -->
+            <div class="control-group">
+                <label for="score-range">Anomaly Score:</label>
+                <input type="range" id="score-min" min="0" max="100" value="0" step="1">
+                <input type="range" id="score-max" min="0" max="100" value="100" step="1">
+                <span id="score-display">0 - 100</span>
+            </div>
+
+            <button id="reset-filters" class="btn">Reset</button>
+        </aside>
+
+        <!-- griglia con le visualizzazioni -->
+        <div class="viz-container">
+            <!-- UNIVARIATE -->
+            <section class="viz-card full-width">
+                <h2>Distribuzione Anomaly Score</h2>
+                <div id="histogram" class="chart"></div>
+            </section>
+
+            <!-- BIVARIATE -->
+            <section class="viz-card">
+                <h2>Scatter Rank vs Score</h2>
+                <div id="scatter-rank-score" class="chart"></div>
+            </section>
+
+            <!-- TRIVARIATE -->
+            <section class="viz-card">
+                <h2>Scatter con colore e size</h2>
+                <p class="description">Afterhour vs Score, colore=cluster, size=attività</p>
+                <div id="scatter-trivariate" class="chart"></div>
+            </section>
+
+            <!-- TEMPORAL -->
+            <section class="viz-card full-width">
+                <h2>Evoluzione Temporale</h2>
+                <p class="description">Score medio per cluster nelle 8 settimane</p>
+                <div id="line-chart-temporal" class="chart"></div>
+            </section>
+
+            <!-- MULTIVARIATE -->
+            <section class="viz-card full-width">
+                <h2>Parallel Coordinates</h2>
+                <p class="description">6 dimensioni simultanee per confrontare profili utente</p>
+                <div id="parallel-coordinates" class="chart"></div>
+            </section>
+
+            <section class="viz-card">
+                <h2>Radar Chart Cluster</h2>
+                <div id="radar-chart" class="chart"></div>
+            </section>
+
+            <section class="viz-card">
+                <h2>Heatmap Correlazioni</h2>
+                <div id="heatmap" class="chart"></div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <p>Progetto InfoVis 2024/25 - JS, D3.js, SVG, HTML, CSS</p>
+    </footer>
+
+    <!-- carico tutti gli script in ordine (con versione per forzare reload) -->
+    <script src="js/config.js?v=3"></script>
+    <script src="js/data-loader.js?v=3"></script>
+    <script src="js/univariate.js?v=3"></script>
+    <script src="js/bivariate.js?v=3"></script>
+    <script src="js/trivariate.js?v=3"></script>
+    <script src="js/temporal.js?v=3"></script>
+    <script src="js/parallel-coordinates.js?v=3"></script>
+    <script src="js/multivariate.js?v=3"></script>
+    <script src="js/interactions.js?v=3"></script>
+    <script src="js/main.js?v=3"></script>
+</body>
+</html>
