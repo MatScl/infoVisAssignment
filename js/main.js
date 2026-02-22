@@ -44,6 +44,9 @@ async function init() {
 async function renderInitialCharts() {
     const data = window.dataLoader.filteredData;
     
+    console.log('Creo KPI cards...');
+    renderKpiCards(data);
+    
     console.log('Creo histogram...');
     UnivariateCharts.createHistogram(data, 'histogram');
     
@@ -138,7 +141,39 @@ document.addEventListener('DOMContentLoaded', () => {
     init();
 });
 
-// se ridimensiono la finestra ridisegno i grafici
+// ---- KPI Cards ----
+// mostra 4 card con statistiche chiave in cima alla dashboard
+function renderKpiCards(data) {
+    const container = document.getElementById('kpi-cards');
+    if (!container) return;
+    container.innerHTML = '';  // pulisco
+
+    // calcolo metriche (uso Set per contare utenti unici, non righe temporali)
+    const uniqueUsers   = new Set(data.map(d => d.user_id)).size;
+    const insiderCount  = new Set(data.filter(d => d.insider === 1).map(d => d.user_id)).size;
+    const scores        = data.map(d => d.final_anomaly_score);
+    const avgScore      = d3.mean(scores);
+    const maxScore      = d3.max(scores);
+
+    const kpis = [
+        { label: 'Utenti totali',    value: uniqueUsers,                                   color: '#3498db' },
+        { label: 'Insider rilevati', value: insiderCount,                                  color: '#e74c3c' },
+        { label: 'Score medio',      value: avgScore != null ? avgScore.toFixed(2) : '—',  color: '#f39c12' },
+        { label: 'Score massimo',    value: maxScore != null ? maxScore.toFixed(2) : '—',  color: '#8e44ad' }
+    ];
+
+    kpis.forEach(kpi => {
+        const card = document.createElement('div');
+        card.className = 'kpi-card';
+        card.style.borderTop = `4px solid ${kpi.color}`;
+        card.innerHTML = `
+            <div class="kpi-value" style="color:${kpi.color}">${kpi.value}</div>
+            <div class="kpi-label">${kpi.label}</div>
+        `;
+        container.appendChild(card);
+    });
+}
+
 // (uso un timeout per non chiamarlo troppo spesso)
 let resizeTimeout;
 window.addEventListener('resize', () => {

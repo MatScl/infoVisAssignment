@@ -38,6 +38,7 @@ body {
     color: var(--text-dark);
     line-height: 1.6;
     min-height: 100vh;
+    overflow-x: hidden;  /* evita lo scroll orizzontale */
 }
 
 /* header in alto */
@@ -208,12 +209,14 @@ input[type="range"] {
     width: 100%;
     min-height: 300px;
     position: relative;
+    overflow: hidden;  /* SVG non fuoriesce dalla card */
 }
 
 /* SVG Styling */
 .chart svg {
     display: block;
     margin: 0 auto;
+    max-width: 100%;  /* SVG non supera la larghezza del contenitore */
 }
 
 /* Axes */
@@ -315,9 +318,53 @@ input[type="range"] {
     stroke-width: 1px;
 }
 
+/* KPI Cards */
+.kpi-row {
+    display: flex;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+    margin-top: var(--spacing-xs);
+}
+
+.kpi-card {
+    flex: 1;
+    min-width: 140px;
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: var(--spacing-md);
+    text-align: center;
+    border-top-width: 4px;
+    border-top-style: solid;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease;
+}
+
+.kpi-card:hover {
+    transform: translateY(-3px);
+}
+
+.kpi-icon {
+    font-size: 2rem;
+    margin-bottom: 0.3rem;
+}
+
+.kpi-value {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.kpi-label {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-top: 0.3rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
 /* Footer */
-footer {
-    background: var(--primary-color);
+footer {    background: var(--primary-color);
     color: white;
     text-align: center;
     padding: var(--spacing-md);
@@ -325,6 +372,12 @@ footer {
 }
 
 /* Responsive Design */
+@media (max-width: 1400px) {
+    .dashboard {
+        grid-template-columns: 240px 1fr;
+    }
+}
+
 @media (max-width: 1200px) {
     .dashboard {
         grid-template-columns: 1fr;
