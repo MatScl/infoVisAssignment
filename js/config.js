@@ -102,3 +102,19 @@ const FEATURE_LABELS = {
 function getLabel(key) {
     return FEATURE_LABELS[key] || key;  // se non trova la label usa la chiave
 }
+
+// Etichette descrittive per i cluster — basate sui dati reali
+// Cluster 4: 15/60 utenti sono insider (25%) — il cluster più anomalo
+// final_anomaly_score medio non è affidabile per C4 perché ha valori estremi negativi
+// che abbassano la media; i pattern comportamentali spiegano il rischio
+const CLUSTER_LABELS = {
+    0: 'C0 · Poco attivi, low logon',
+    1: 'C1 · Attività fuori orario',
+    2: 'C2 · Alta intensità in orario',
+    3: 'C3 · Attivi in orario, molti file',
+    4: 'C4 · ⚠ Insider (25% del gruppo)'
+};
+
+function getClusterLabel(cluster) {
+    return CLUSTER_LABELS[cluster] ?? `Cluster ${cluster}`;
+}
