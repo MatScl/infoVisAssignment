@@ -1,122 +1,79 @@
-# Dashboard Insider Threat - Progetto InfoVis
+# Dashboard Insider Threat Detection
+Corso: Visualizzazione delle Informazioni — A.A. 2024/25
 
-**Corso**: Visualizzazione delle Informazioni  
-**A.A.**: 2024/25
+Dashboard interattiva per l'analisi di comportamenti anomali su dati aziendali simulati (CERT r4.2). Costruita con D3.js v7, senza framework, senza backend.
 
-## Descrizione
+---
 
-Dashboard per visualizzare pattern anomali in dati di insider threat (minacce interne aziendali).
+## Avvio rapido
 
-Dataset CERT r4.2 con 300 utenti e 670+ feature comportamentali.
-
-## Tecnologie
-
-- **JavaScript ES6+** - classi, async/await
-- **D3.js v7** - scale, assi, transizioni, statistiche
-- **HTML5 + CSS3** - Grid layout, SVG
-- **DOM API** - manipolazione dinamica
-
-## Visualizzazioni
-
-Il progetto implementa **7 grafici** che coprono progressivamente i concetti del corso:
-
-### 1. Histogram (univariata)
-Distribuzione anomaly score con 20 bins - mostra outlier e normalità
-
-### 2. Scatterplot (bivariata)
-Relazione rank vs score, colore per insider/normale - verifica consistenza ranking
-
-### 3. Scatter Colorato (trivariata)
-After-hour vs score con encoding multipli:
-- Posizione X/Y = afterhour activity vs anomaly score
-- Colore = cluster (0-4)
-- Dimensione cerchi = volume totale attività
-
-### 4. Line Chart (temporale)  NUOVO
-Evoluzione score medio per cluster nelle 8 settimane:
-- 5 linee colorate (1 per cluster)
-- Mostra trend temporali e escalation comportamentale
-- Animazione stroke-dasharray
-
-### 5. Parallel Coordinates (multivariata)  NUOVO
-6 dimensioni simultanee per confrontare profili utente:
-- anomaly_score, n_allact, n_afterhour, n_email, n_file, pagerank
-- Sampling intelligente (max 200 utenti per performance)
-- Colore per cluster, hover per dettagli
-
-### 6. Radar Chart (multivariata)
-Profili medi dei 5 cluster su 6 dimensioni normalizzate
-
-### 7. Heatmap (multivariata)
-Matrice correlazioni 11×11 tra feature comportamentali
-
-## Interazioni
-
-- **Filtri**: cluster, tipo utente, range score
-- **Tooltip**: dettagli on-demand
-- **Transizioni**: animazioni D3
-
-## Avvio
-
-Serve un server HTTP locale per CORS:
-
-\`\`\`bash
-python start_server.py
-# oppure
+```bash
 python -m http.server 8000
-\`\`\`
+```
+Apri il browser su `http://localhost:8000`
 
-Aprire **http://localhost:8000**
+---
 
-## Documentazione
+## Il progetto
 
-La documentazione estesa è stata raccolta nella cartella `_docs/` (tenuta fuori dal repo tramite `.gitignore`).
+Punto di arrivo di una pipeline che parte da **Sistemi Intelligenti per Internet**: lì vengono rilevate le anomalie con Isolation Forest e K-Means, qui quelle anomalie diventano esplorabili visivamente.
 
-File principali:
-- `_docs/DOCUMENTAZIONE_UNICA_PRESENTAZIONE.md` — testo unico “da presentazione” (contesto → task → spiegazione codice)
-- `_docs/SCOPO_PROGRAMMA.md` — scopo + provenienza dataset + razionale
-- `_docs/SPIEGAZIONE_COMPLETA.md` — walkthrough tecnico di come gira la dashboard
-- `_docs/TASK_UTENTE_CONCRETI.md` — task pratici dell’analista (scenario)
+**Dataset:** CERT Insider Threat Dataset r4.2 — 300 utenti × 8 settimane = 2400 righe. 15 insider reali distribuiti in 5 cluster comportamentali.
+
+---
 
 ## Struttura
 
 ```
-progetto finale/
-├── index.html                 # Dashboard principale
-├── css/style.css              # Styling (372 righe)
+├── index.html
+├── css/
+│   └── style.css
 ├── js/
-│   ├── config.js              # Configurazione globale
-│   ├── data-loader.js         # Caricamento CSV (179 righe)
-│   ├── univariate.js          # Histogram (107 righe)
-│   ├── bivariate.js           # Scatter plots (122 righe)
-│   ├── trivariate.js          # Scatter 3D encoded (145 righe)
-│   ├── temporal.js            # Line chart ( 210 righe)
-│   ├── parallel-coordinates.js # Parallel coords ( 190 righe)
-│   ├── multivariate.js        # Radar + Heatmap (263 righe)
-│   ├── interactions.js        # Filtri dinamici (170 righe)
-│   └── main.js                # Inizializzazione (145 righe)
+│   ├── config.js
+│   ├── data-loader.js
+│   ├── univariate.js
+│   ├── bivariate.js
+│   ├── trivariate.js
+│   ├── temporal.js
+│   ├── parallel-coordinates.js
+│   ├── multivariate.js
+│   ├── interactions.js
+│   └── main.js
 ├── data/
-│   ├── raw/
-│   │   └── user_features_extended.csv
 │   └── results/
-│       ├── anomalies_extended.csv      # 2400 righe (300 user × 8 week)
-│       ├── cluster_profiles.csv        # Per radar chart
-│       └── correlation_matrix.csv      # Per heatmap
-└── scripts/                   # Python preprocessing (non parte della webapp)
-    ├── enrich_dataset.py
-    └── analyze_temporal_data.py
+└── start_server.py
 ```
 
-**Totale JavaScript**: ~1530 righe (da ~1200 prima dell'aggiunta)
-└── data/results/anomalies_extended.csv
-\`\`\`
+---
 
-## Dataset
+## Visualizzazioni
 
-300 utenti × 670 feature: personality, attività, anomaly score, cluster, insider flag
+| Grafico | Task | Tecnica D3 |
+|---------|------|------------|
+| Istogramma | Distribuzione score anomalia | `d3.bin()` |
+| Scatter rank vs score | Identificare outlier | `scaleLinear` + colore insider |
+| Scatter trivariato | 4 variabili simultanee | `scaleSqrt` per area cerchi |
+| Line chart | Evoluzione temporale per cluster | `d3.rollup` + `curveMonotoneX` |
+| Parallel coordinates | Outlier multidimensionali | `scalePoint` + scale Y indipendenti |
+| Radar chart | Profili medi per cluster | `d3.lineRadial` + normalizzazione locale |
+| Heatmap | Matrice cluster × feature | `scaleBand` + `interpolateRdYlGn` |
 
-## Note
+---
 
-- ~1200 righe JS totali
-- Approccio accademico: graduale da uni a multivariata
-- Codice commentato in italiano
+## Interazioni
+
+Tutti i grafici sono coordinati — ogni filtro si propaga immediatamente a tutte le visualizzazioni:
+
+- **Cluster** — multi-select (C0 … C4)
+- **Tipo utente** — tutti / solo insider / solo normali
+- **Score range** — doppio slider sui valori reali
+- **Reset** — ripristina tutto
+
+---
+
+## Stack tecnico
+
+- D3.js v7 (CDN)
+- JavaScript ES6 — classi separate per ogni grafico
+- CSS Grid — sidebar 280px + griglia grafici
+- Python HTTP server — necessario per CORS con `d3.csv`
