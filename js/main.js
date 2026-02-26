@@ -48,27 +48,27 @@ async function renderInitialCharts() {
     renderKpiCards(data);
     
     console.log('Creo histogram...');
-    UnivariateCharts.createHistogram(data, 'histogram');
+    UnivariateCharts.createHistogram(data, 'istogramma');
     
     console.log('Creo scatter...');
     BivariateCharts.createScatterRankScore(data, 'scatter-rank-score');
     
     console.log('Creo scatter colorato...');
-    TrivariateCharts.createColoredScatter(data, 'scatter-trivariate');
+    TrivariateCharts.createColoredScatter(data, 'scatter-multivariato');
     
     console.log('Creo line chart temporale...');
     const temporalCharts = new TemporalCharts();
-    temporalCharts.createLineChart(data, 'line-chart-temporal');
+    temporalCharts.createLineChart(data, 'grafico-temporale');
     
     console.log('Creo parallel coordinates...');
     const parallelCoords = new ParallelCoordinates();
-    parallelCoords.createParallelCoordinates(data, 'parallel-coordinates');
+    parallelCoords.createParallelCoordinates(data, 'coordinate-parallele');
     
     console.log('Creo radar chart...');
-    await MultivariateCharts.createRadarChart(data, 'radar-chart');
+    await MultivariateCharts.createRadarChart(data, 'radar-cluster');
     
     console.log('Creo heatmap...');
-    await MultivariateCharts.createHeatmap(data, 'heatmap');
+    await MultivariateCharts.createHeatmap(data, 'heatmap-cluster');
     
     console.log('Grafici pronti!');
 }
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ---- KPI Cards ----
 // mostra 4 card con statistiche chiave in cima alla dashboard
 function renderKpiCards(data) {
-    const container = document.getElementById('kpi-cards');
+    const container = document.getElementById('schede-kpi');
     if (!container) return;
     container.innerHTML = '';  // pulisco
 

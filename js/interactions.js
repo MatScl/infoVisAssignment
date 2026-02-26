@@ -142,25 +142,25 @@ class InteractionManager {
         renderKpiCards(data);
         
         // Univariate
-        UnivariateCharts.createHistogram(data, 'histogram');
+        UnivariateCharts.createHistogram(data, 'istogramma');
         
         // Bivariate
         BivariateCharts.createScatterRankScore(data, 'scatter-rank-score');
         
         // Trivariate
-        TrivariateCharts.createColoredScatter(data, 'scatter-trivariate');
+        TrivariateCharts.createColoredScatter(data, 'scatter-multivariato');
         
         // Temporal
         const temporalCharts = new TemporalCharts();
-        temporalCharts.createLineChart(data, 'line-chart-temporal');
+        temporalCharts.createLineChart(data, 'grafico-temporale');
         
         // Parallel Coordinates
         const parallelCoords = new ParallelCoordinates();
-        parallelCoords.createParallelCoordinates(data, 'parallel-coordinates');
+        parallelCoords.createParallelCoordinates(data, 'coordinate-parallele');
         
         // Multivariate (ora async)
-        await MultivariateCharts.createRadarChart(data, 'radar-chart');
-        await MultivariateCharts.createHeatmap(data, 'heatmap');
+        await MultivariateCharts.createRadarChart(data, 'radar-cluster');
+        await MultivariateCharts.createHeatmap(data, 'heatmap-cluster');
     }
 }
 
