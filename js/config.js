@@ -92,7 +92,7 @@ const CLUSTER_LABELS = {
     1: 'C1 · Attività fuori orario',
     2: 'C2 · Alta intensità in orario',
     3: 'C3 · Attivi in orario, molti file',
-    4: 'C4 · ⚠ Insider (25% del gruppo)'
+    4: 'C4 · Insider (25% del gruppo)'
 };
 
 function getClusterLabel(cluster) {
