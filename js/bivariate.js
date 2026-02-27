@@ -5,8 +5,21 @@ class BivariateCharts {
     
     // scatterplot che mostra rank vs score
     static createScatterRankScore(data, containerId) {
-        console.log('Creo scatterplot con', data.length, 'punti');
-        
+        // Aggrega per utente: media rank, media score, insider fisso, cluster più frequente
+        const byUser = d3.rollup(
+            data,
+            rows => ({
+                user_id: rows[0].user_id,
+                rank: d3.mean(rows, r => r.rank),
+                final_anomaly_score: d3.mean(rows, r => r.final_anomaly_score),
+                insider: rows[0].insider,
+                cluster: rows[0].cluster,
+            }),
+            d => d.user_id
+        );
+        const aggData = Array.from(byUser.values());
+        console.log('Creo scatterplot con', aggData.length, 'utenti unici (aggregati da', data.length, 'righe)');
+
         // pulisco il container
         d3.select(`#${containerId}`).selectAll('*').remove();
         
@@ -23,12 +36,12 @@ class BivariateCharts {
         
         // scale per x e y
         const x = d3.scaleLinear()
-            .domain([0, d3.max(data, d => d.rank)])
+            .domain([0, d3.max(aggData, d => d.rank)])
             .range([0, width]);
         
         const y = d3.scaleLinear()
-            .domain([d3.min(data, d => d.final_anomaly_score), 
-                     d3.max(data, d => d.final_anomaly_score)])
+            .domain([d3.min(aggData, d => d.final_anomaly_score), 
+                     d3.max(aggData, d => d.final_anomaly_score)])
             .nice()
             .range([height, 0]);
         
@@ -65,7 +78,7 @@ class BivariateCharts {
         
         // Points
         svg.selectAll('.dot')
-            .data(data)
+            .data(aggData)
             .join('circle')
             .attr('class', d => `dot ${d.insider === 1 ? 'insider' : 'normal'}`)
             .attr('cx', d => x(d.rank))
@@ -76,10 +89,10 @@ class BivariateCharts {
                 d3.select(this).attr('r', 8);
                 tooltip.html(`
                     <strong>User ${d.user_id}</strong><br>
-                    Rank: ${d.rank}<br>
-                    Score: ${d.final_anomaly_score.toFixed(2)}<br>
+                    Rank medio: ${d.rank.toFixed(0)}<br>
+                    Score medio: ${d.final_anomaly_score.toFixed(2)}<br>
                     Cluster: ${d.cluster}<br>
-                    Tipo: ${d.insider === 1 ? 'Insider' : 'Normale'}
+                    Tipo: ${d.insider === 1 ? '⚠ Insider' : 'Normale'}
                 `)
                 .style('opacity', 1)
                 .style('left', (event.pageX + 10) + 'px')

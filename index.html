@@ -41,8 +41,8 @@
             <!-- slider per score -->
             <div class="control-group">
                 <label for="score-range">Anomaly Score:</label>
-                <input type="range" id="score-min" min="0" max="100" value="0" step="1">
-                <input type="range" id="score-max" min="0" max="100" value="100" step="1">
+                <input type="range" id="score-min" min="0" max="100" value="0" step="any">
+                <input type="range" id="score-max" min="0" max="100" value="100" step="any">
                 <span id="score-display">0 - 100</span>
             </div>
 
@@ -61,43 +61,47 @@
             <!-- UNIVARIATE -->
             <section class="viz-card full-width">
                 <h2>Distribuzione Anomaly Score</h2>
+                <p class="description">Ogni barra raggruppa utenti con score simile. La maggior parte ha score basso (comportamento normale); la coda a destra con score alto indica i potenziali anomali. Gli insider non sono necessariamente nella coda più alta — il pattern comportamentale conta più dello score grezzo.</p>
                 <div id="istogramma" class="chart"></div>
             </section>
 
             <!-- BIVARIATE -->
             <section class="viz-card full-width">
-                <h2>Scatter Rank vs Score</h2>
+                <h2>Rank vs Anomaly Score (valori medi su 8 settimane)</h2>
+                <p class="description">Ogni punto è un utente unico — i valori sono la media delle 8 settimane. <span style="color:#e74c3c;font-weight:bold;">Rosso = insider confermato</span>, <span style="color:#27ae60;font-weight:bold;">verde = normale</span>. Rank 1 = utente più anomalo secondo il modello. Nota: alcuni insider si trovano a rank medio-alto, a conferma che score e rank da soli non bastano a identificarli.</p>
                 <div id="scatter-rank-score" class="chart"></div>
             </section>
 
             <!-- TRIVARIATE -->
             <section class="viz-card full-width">
-                <h2>Scatter con colore e size</h2>
-                <p class="description">Afterhour vs Score, colore=cluster, size=attività</p>
+                <h2>Attività After-Hour vs Score (valori medi su 8 settimane)</h2>
+                <p class="description">Ogni punto è un utente unico (media 8 settimane). <strong>Posizione X</strong> = attività fuori orario, <strong>Y</strong> = anomaly score, <strong>colore</strong> = cluster di appartenenza, <strong>dimensione</strong> = attività totali. Un cerchio grande in alto a destra = molto attivo, fuori orario, score alto — ma non necessariamente insider. Il cluster C1 (arancio) domina l'asse after-hour pur non contenendo insider.</p>
                 <div id="scatter-multivariato" class="chart"></div>
             </section>
 
             <!-- TEMPORAL -->
             <section class="viz-card full-width">
-                <h2>Evoluzione Temporale</h2>
-                <p class="description">Score medio per cluster nelle 8 settimane</p>
+                <h2>Evoluzione Score Medio per Cluster (settimane 1–8)</h2>
+                <p class="description">Ogni linea è un cluster — mostra come cambia lo score medio nelle 8 settimane. <span style="color:#e74c3c;font-weight:bold;">C4 (insider)</span> mantiene uno score relativamente stabile ma non è necessariamente il più alto in ogni settimana. Se una linea sale bruscamente in una settimana specifica, indica un evento anomalo concentrato in quel periodo.</p>
                 <div id="grafico-temporale" class="chart"></div>
             </section>
 
             <!-- MULTIVARIATE -->
             <section class="viz-card full-width">
-                <h2>Parallel Coordinates</h2>
-                <p class="description">6 dimensioni simultanee per confrontare profili utente</p>
+                <h2>Coordinate Parallele — 6 dimensioni simultanee</h2>
+                <p class="description">Ogni linea è un utente (campione di 200). Ogni asse verticale è una feature diversa. Una linea che attraversa valori alti su più assi indica un utente anomalo su più dimensioni contemporaneamente — qualcosa impossibile da vedere in uno scatter 2D. Colore = cluster. Hover su una linea per isolarla.</p>
                 <div id="coordinate-parallele" class="chart"></div>
             </section>
 
             <section class="viz-card">
-                <h2>Radar Chart Cluster</h2>
+                <h2>Profilo Medio dei Cluster (Radar)</h2>
+                <p class="description">Ogni poligono è un cluster. Più il poligono è esteso su un asse, più quel cluster è attivo in quella feature. Confronta la <span style="color:#e74c3c;font-weight:bold;">forma di C4</span> con gli altri: gli insider hanno un profilo caratteristico diverso dagli utenti normali.</p>
                 <div id="radar-cluster" class="chart"></div>
             </section>
 
             <section class="viz-card">
-                <h2>Heatmap Correlazioni</h2>
+                <h2>Heatmap Cluster × Feature</h2>
+                <p class="description">Ogni cella mostra il valore medio normalizzato di una feature per un cluster. <span style="color:#27ae60;font-weight:bold;">Verde = alto</span>, <span style="color:#e74c3c;font-weight:bold;">rosso = basso</span>. Le colonne con più contrasto tra righe sono le feature più discriminanti. <strong>C4</strong> (bordo rosso) è il cluster degli insider — cerca le celle dove differisce di più dagli altri.</p>
                 <div id="heatmap-cluster" class="chart"></div>
             </section>
         </div>

@@ -20,8 +20,6 @@ class ParallelCoordinates {
         const container = d3.select(`#${containerId}`);
         container.selectAll('*').remove();
 
-        console.log('Parallel coords - dati in input:', data.length, 'righe');
-
         const width = container.node().getBoundingClientRect().width || 800;
         const height = 480;
         const w = width - this.margin.left - this.margin.right;
@@ -34,10 +32,28 @@ class ParallelCoordinates {
         const g = svg.append('g')
             .attr('transform', `translate(${this.margin.left},${this.margin.top})`);
 
-        // campiono a max 200 utenti per leggibilità — con 2400 linee diventa illeggibile
-        const datiVisualizzati = data.length > 200
-            ? data.sort(() => 0.5 - Math.random()).slice(0, 200)
-            : data;
+        // aggrego per user_id (media su tutte le settimane), 1 riga = 1 utente
+        const byUser = d3.rollup(
+            data,
+            rows => ({
+                user_id:              rows[0].user_id,
+                cluster:              rows[0].cluster,
+                insider:              rows[0].insider,
+                final_anomaly_score:  d3.mean(rows, r => r.final_anomaly_score),
+                n_allact:             d3.mean(rows, r => r.n_allact),
+                n_afterhourallact:    d3.mean(rows, r => r.n_afterhourallact),
+                n_email:              d3.mean(rows, r => r.n_email),
+                n_file:               d3.mean(rows, r => r.n_file),
+                rank:                 d3.mean(rows, r => r.rank),
+            }),
+            d => d.user_id
+        );
+        const utenti = Array.from(byUser.values());
+
+        // campiono a max 200 utenti per leggibilità — con 300 linee è già denso
+        const datiVisualizzati = utenti.length > 200
+            ? utenti.sort(() => 0.5 - Math.random()).slice(0, 200)
+            : utenti;
 
         // colori per cluster — stessa palette del resto della dashboard
         const colorScale = d3.scaleOrdinal()
@@ -54,7 +70,7 @@ class ParallelCoordinates {
         const scaleY = {};
         this.dimensioni.forEach(dim => {
             scaleY[dim.key] = d3.scaleLinear()
-                .domain(d3.extent(data, d => d[dim.key]))
+                .domain(d3.extent(utenti, d => d[dim.key]))
                 .range([h, 0])
                 .nice();
         });

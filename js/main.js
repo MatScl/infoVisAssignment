@@ -44,10 +44,10 @@ async function init() {
 async function renderInitialCharts() {
     const data = window.dataLoader.filteredData;
     
-    console.log('Creo KPI cards...');
+    console.log('Creo schede KPI...');
     renderKpiCards(data);
     
-    console.log('Creo histogram...');
+    console.log('Creo istogramma...');
     UnivariateCharts.createHistogram(data, 'istogramma');
     
     console.log('Creo scatter...');

@@ -21,8 +21,13 @@ class UnivariateCharts {
             .append('g')
             .attr('transform', `translate(${margin.left},${margin.top})`);
         
-        // prendo solo gli anomaly score
-        const scores = data.map(d => d.final_anomaly_score);
+        // aggrego per user_id: 1 utente = 1 valore (media degli score su tutte le settimane)
+        const byUser = d3.rollup(
+            data,
+            rows => d3.mean(rows, r => r.final_anomaly_score),
+            d => d.user_id
+        );
+        const scores = Array.from(byUser.values());
         
         // creo i bin per l'istogramma (20 bin)
         const bins = d3.bin()
@@ -68,7 +73,7 @@ class UnivariateCharts {
             .attr('x', -height / 2)
             .attr('y', -45)
             .attr('text-anchor', 'middle')
-            .text('Frequenza');
+            .text('N° Utenti');
         
         // tooltip per mostrare info quando passo col mouse
         const tooltip = d3.select('body')
@@ -88,7 +93,7 @@ class UnivariateCharts {
                 // cambio colore quando ci passo sopra
                 d3.select(this).style('fill', CONFIG.colors.accent);
                 // mostro tooltip
-                tooltip.html(`Range: ${d.x0.toFixed(2)} - ${d.x1.toFixed(2)}<br>Count: ${d.length}`)
+                tooltip.html(`Range: ${d.x0.toFixed(2)} - ${d.x1.toFixed(2)}<br>Utenti: ${d.length}`)
                     .style('opacity', 1)
                     .style('left', (event.pageX + 10) + 'px')
                     .style('top', (event.pageY - 20) + 'px');

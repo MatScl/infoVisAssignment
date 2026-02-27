@@ -61,10 +61,12 @@ class InteractionManager {
         const minScore = d3.min(scores);
         const maxScore = d3.max(scores);
         
+        minSlider.step = 'any';
         minSlider.min = minScore;
         minSlider.max = maxScore;
         minSlider.value = minScore;
         
+        maxSlider.step = 'any';
         maxSlider.min = minScore;
         maxSlider.max = maxScore;
         maxSlider.value = maxScore;

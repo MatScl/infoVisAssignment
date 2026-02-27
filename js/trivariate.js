@@ -6,7 +6,20 @@ class TrivariateCharts {
     
     // scatterplot con 3 encoding: x, y, colore, dimensione
     static createColoredScatter(data, containerId) {
-        console.log('Creo scatter trivariate...');
+        // Aggrega per utente: media delle variabili continue, insider e cluster fissi
+        const byUser = d3.rollup(
+            data,
+            rows => ({
+                user_id: rows[0].user_id,
+                n_afterhourallact: d3.mean(rows, r => r.n_afterhourallact),
+                final_anomaly_score: d3.mean(rows, r => r.final_anomaly_score),
+                n_allact: d3.mean(rows, r => r.n_allact),
+                cluster: rows[0].cluster,
+                insider: rows[0].insider,
+            }),
+            d => d.user_id
+        );
+        const aggData = Array.from(byUser.values());
         
         const margin = { top: 40, right: 150, bottom: 60, left: 60 };
         const container = d3.select(`#${containerId}`);
@@ -27,21 +40,21 @@ class TrivariateCharts {
         
         // Scale
         const x = d3.scaleLinear()
-            .domain(d3.extent(data, d => d.n_afterhourallact))
+            .domain(d3.extent(aggData, d => d.n_afterhourallact))
             .nice()
             .range([0, width]);
         
         const y = d3.scaleLinear()
-            .domain(d3.extent(data, d => d.final_anomaly_score))
+            .domain(d3.extent(aggData, d => d.final_anomaly_score))
             .nice()
             .range([height, 0]);
         
         const colorScale = d3.scaleOrdinal()
-            .domain([...new Set(data.map(d => d.cluster))].sort())
+            .domain([...new Set(aggData.map(d => d.cluster))].sort())
             .range(CONFIG.colors.clusters);
         
         const sizeScale = d3.scaleSqrt()
-            .domain(d3.extent(data, d => d.n_allact))
+            .domain(d3.extent(aggData, d => d.n_allact))
             .range([3, 15]);
         
         // Assi
@@ -75,7 +88,7 @@ class TrivariateCharts {
         
         // Points
         svg.selectAll('.dot')
-            .data(data)
+            .data(aggData)
             .join('circle')
             .attr('class', 'dot')
             .attr('cx', d => x(d.n_afterhourallact))
@@ -92,11 +105,11 @@ class TrivariateCharts {
                 
                 tooltip.html(`
                     <strong>User ${d.user_id}</strong><br>
-                    After-hour: ${d.n_afterhourallact.toFixed(2)}<br>
-                    Score: ${d.final_anomaly_score.toFixed(2)}<br>
+                    After-hour medio: ${d.n_afterhourallact.toFixed(1)}<br>
+                    Score medio: ${d.final_anomaly_score.toFixed(2)}<br>
                     Cluster: ${d.cluster}<br>
-                    Tot. Attività: ${d.n_allact.toFixed(0)}<br>
-                    Tipo: ${d.insider === 1 ? 'Insider' : 'Normale'}
+                    Tot. Attività media: ${d.n_allact.toFixed(0)}<br>
+                    Tipo: ${d.insider === 1 ? '⚠ Insider' : 'Normale'}
                 `)
                 .style('opacity', 1)
                 .style('left', (event.pageX + 10) + 'px')
@@ -118,7 +131,7 @@ class TrivariateCharts {
             .attr('class', 'legend')
             .attr('transform', `translate(${width + 20}, 0)`);
         
-        const clusters = [...new Set(data.map(d => d.cluster))].sort();
+        const clusters = [...new Set(aggData.map(d => d.cluster))].sort();
         
         legend.append('text')
             .attr('x', 0)
@@ -151,9 +164,9 @@ class TrivariateCharts {
             .text('Dimensione');
         
         const sizeValues = [
-            d3.min(data, d => d.n_allact),
-            d3.mean(data, d => d.n_allact),
-            d3.max(data, d => d.n_allact)
+            d3.min(aggData, d => d.n_allact),
+            d3.mean(aggData, d => d.n_allact),
+            d3.max(aggData, d => d.n_allact)
         ];
         
         legend.selectAll('.size-legend')
