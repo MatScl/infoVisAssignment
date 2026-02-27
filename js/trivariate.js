@@ -19,7 +19,18 @@ class TrivariateCharts {
             }),
             d => d.user_id
         );
-        const aggData = Array.from(byUser.values());
+    const aggData = Array.from(byUser.values());
+    // Sposta la forzatura a intero PRIMA della creazione della colorScale
+    aggData.forEach(d => d.cluster = Math.round(+d.cluster));
+
+    // DEBUG: stampa i valori di cluster e la domain della colorScale
+    setTimeout(() => {
+      console.log('DEBUG cluster values:', aggData.map(d => d.cluster));
+      const domain = [...new Set(aggData.map(d => d.cluster))].sort();
+      console.log('DEBUG colorScale domain:', domain);
+      // La colorScale vera viene creata qui sotto, dopo la forzatura
+      // quindi ora la domain sarà corretta
+    }, 0);
         
         const margin = { top: 40, right: 150, bottom: 60, left: 60 };
         const container = d3.select(`#${containerId}`);
@@ -49,6 +60,7 @@ class TrivariateCharts {
             .nice()
             .range([height, 0]);
         
+        // La colorScale ora viene creata DOPO la forzatura a intero
         const colorScale = d3.scaleOrdinal()
             .domain([...new Set(aggData.map(d => d.cluster))].sort())
             .range(CONFIG.colors.clusters);
@@ -94,7 +106,11 @@ class TrivariateCharts {
             .attr('cx', d => x(d.n_afterhourallact))
             .attr('cy', d => y(d.final_anomaly_score))
             .attr('r', 0)
-            .attr('fill', d => colorScale(d.cluster))
+            .attr('fill', d => {
+                const color = colorScale(d.cluster);
+                console.log('DEBUG fill', {cluster: d.cluster, color});
+                return color;
+            })
             .attr('opacity', 0.7)
             .attr('stroke', 'white')
             .attr('stroke-width', 1)

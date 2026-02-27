@@ -267,7 +267,7 @@ input[type="range"] {
 }
 
 .dot {
-    fill: var(--secondary-color);
+    /* fill removed: let D3 handle color via SVG attribute */
     stroke: white;
     stroke-width: 1.5px;
     transition: r 0.2s ease;
